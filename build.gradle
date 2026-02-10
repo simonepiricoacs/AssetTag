@@ -3,8 +3,10 @@ plugins {
 }
 
 allprojects {
-    project.ext.publishRepoName = "local"
-    project.ext.publishRepoUrl =  "file://${buildDir}/repo"
+    project.ext.publishRepoName = "asc-water-repository"
+    project.ext.publishRepoUrl =  "https://nexus.acsoftware.it/nexus/repository/maven-water/"
+	project.ext.publishRepoUsername =  System.getProperty("publishRepoUsername","noUser")
+    project.ext.publishRepoPassword =  System.getProperty("publishRepoPassword","noPassword")
     
     project.ext.AssetTagVersion = project.waterVersion
     group 'it.water.assettag'
@@ -23,21 +25,24 @@ allprojects {
 	apply plugin: 'java'
 	apply plugin: 'maven-publish'
 	apply plugin: 'jacoco'
-
-    publishing {
-        repositories {
-            maven {
-                name = project.publishRepoName
-                url = project.publishRepoUrl
-            }
-        }
-    }
-
-    test {
+	
+	publishing {
+		repositories {
+			maven {
+								credentials {
+					username project.publishRepoUsername
+					password project.publishRepoPassword
+				}
+								name = project.publishRepoName
+				url = project.publishRepoUrl
+			}
+		}
+	}
+ 
+  test {
         finalizedBy jacocoTestReport
     }
  }
-
 
 sonarqube {
     properties {
@@ -77,8 +82,5 @@ task jacocoRootReport(type: JacocoReport) {
         html.destination file("${buildDir}/reports/jacoco/jacocoRootReport.html")
     }
 }
-
-
-
 
 

@@ -41,10 +41,10 @@
 			"serviceRestPackagePath": "/src/main/java/it/water/assettag/service/rest",
 			"serviceRestPackage": "it.water.assettag.service.rest",
 			"testPackage": "it.water.assettag",
-			"publishModule": false,
-			"publishRepoName": "My Repository",
-			"publishRepoUrl": "https://myrepo/m2",
-			"publishRepoHasCredentials": false,
+			"publishModule": true,
+			"publishRepoName": "asc-water-repository",
+			"publishRepoUrl": "https://nexus.acsoftware.it/nexus/repository/maven-water/",
+			"publishRepoHasCredentials": true,
 			"entities": [
 						{
 									"modelName": "AssetTag",
