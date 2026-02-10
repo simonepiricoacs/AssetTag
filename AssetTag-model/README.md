@@ -1,0 +1,1 @@
+# AssetTag Model Module

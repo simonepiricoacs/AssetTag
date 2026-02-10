@@ -1,0 +1,17 @@
+meta {
+  name: Save New AssetTag entity
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8080/water/assettags
+  body: json
+  auth: none
+}
+
+body:json {
+  { 
+    "exampleField": "exampleField"
+  }
+}
