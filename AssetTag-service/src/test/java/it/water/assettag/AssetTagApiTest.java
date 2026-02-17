@@ -322,6 +322,65 @@ class AssetTagApiTest implements Service {
 
     }
 
+    @Order(16)
+    @Test
+    void findAssetTagResourceShouldReturnNullWhenTagDoesNotExist() {
+        TestRuntimeUtils.impersonateAdmin(componentRegistry);
+        Assertions.assertThrows(NoResultException.class,
+                () -> this.assetTagManager.findAssetTagResource("it.water.missing", 1L, -1L));
+    }
+
+    @Order(17)
+    @Test
+    void addAssetTagShouldNotDuplicateAssociation() {
+        TestRuntimeUtils.impersonateAdmin(componentRegistry);
+        AssetTag entity = this.assettagApi.save(createAssetTag(405));
+        String resourceName = "it.water.model.duplicate";
+        long resourceId = 3L;
+        this.assetTagManager.addAssetTag(resourceName, resourceId, entity.getId());
+        this.assetTagManager.addAssetTag(resourceName, resourceId, entity.getId());
+        long[] tagIds = this.assetTagManager.findAssetTags(resourceName, resourceId);
+        Assertions.assertEquals(1, tagIds.length);
+        AssetTagResource atr = this.assetTagManager.findAssetTagResource(resourceName, resourceId, entity.getId());
+        Assertions.assertNotNull(atr);
+    }
+
+    @Order(18)
+    @Test
+    void addAndRemoveAssetTagsBatchShouldWork() {
+        TestRuntimeUtils.impersonateAdmin(componentRegistry);
+        AssetTag first = this.assettagApi.save(createAssetTag(406));
+        AssetTag second = this.assettagApi.save(createAssetTag(407));
+        String resourceName = "it.water.model.batch";
+        long resourceId = 10L;
+
+        this.assetTagManager.addAssetTags(resourceName, resourceId, new long[]{first.getId(), second.getId()});
+        long[] found = this.assetTagManager.findAssetTags(resourceName, resourceId);
+        Assertions.assertEquals(2, found.length);
+
+        this.assetTagManager.removeAssetTags(resourceName, resourceId, new long[]{first.getId(), second.getId()});
+        long[] afterRemove = this.assetTagManager.findAssetTags(resourceName, resourceId);
+        Assertions.assertEquals(0, afterRemove.length);
+    }
+
+    @Order(19)
+    @Test
+    void removeAssetTagShouldIgnoreDifferentResource() {
+        TestRuntimeUtils.impersonateAdmin(componentRegistry);
+        AssetTag entity = this.assettagApi.save(createAssetTag(408));
+        String resourceName = "it.water.model.remove";
+        long resourceId = 20L;
+        this.assetTagManager.addAssetTag(resourceName, resourceId, entity.getId());
+
+        this.assetTagManager.removeAssetTag(resourceName, resourceId + 1, entity.getId());
+        long[] stillFound = this.assetTagManager.findAssetTags(resourceName, resourceId);
+        Assertions.assertEquals(1, stillFound.length);
+
+        this.assetTagManager.removeAssetTag(resourceName, resourceId, entity.getId());
+        long[] afterRemove = this.assetTagManager.findAssetTags(resourceName, resourceId);
+        Assertions.assertEquals(0, afterRemove.length);
+    }
+
     private AssetTag createAssetTag(int seed) {
         AssetTag entity = new AssetTag("Tag" + seed, (long) (seed + 1));
         return entity;
