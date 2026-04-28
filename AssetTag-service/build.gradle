@@ -92,3 +92,13 @@ publishing {
         	}
     }
  }
+
+waterDescriptor {
+    moduleId    = 'it.water.asset.tag'
+    displayName = 'Asset Tag Service'
+    description = 'Asset tag management service for labeling and filtering Water Framework assets'
+
+    input {
+        standardPin 'service-discovery'
+    }
+}
