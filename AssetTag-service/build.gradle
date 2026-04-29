@@ -97,6 +97,9 @@ waterDescriptor {
     moduleId    = 'it.water.asset.tag'
     displayName = 'Asset Tag Service'
     description = 'Asset tag management service for labeling and filtering Water Framework assets'
+    componentsPackage = 'it.water.assettag.service'
+    repositoryPackage = 'it.water.assettag.repository'
+    entitiesPackage   = 'it.water.assettag.model'
 
     input {
         standardPin 'service-discovery'
